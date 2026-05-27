@@ -1,0 +1,56 @@
+[
+  {
+    "slug": "serie-01",
+    "index": "/26",
+    "title": "SELECTED WORKS",
+    "photos": 48,
+    "year": "2023",
+    "time": "12:30 PM",
+    "placeholder": "black"
+  },
+  {
+    "slug": "serie-02",
+    "index": "/26",
+    "title": "VR SESSIONS",
+    "photos": 18,
+    "year": "2024",
+    "time": "09:00 AM",
+    "placeholder": "white"
+  },
+  {
+    "slug": "serie-03",
+    "index": "/26",
+    "title": "ANNA MAVI",
+    "photos": 32,
+    "year": "2022",
+    "time": "12:30 PM",
+    "placeholder": "black"
+  },
+  {
+    "slug": "serie-04",
+    "index": "/26",
+    "title": "HARMONY GARDEN",
+    "photos": 25,
+    "year": "2021",
+    "time": "12:30 PM",
+    "placeholder": "white"
+  },
+  {
+    "slug": "serie-05",
+    "index": "/26",
+    "title": "NOCTURNE",
+    "photos": 22,
+    "year": "2024",
+    "time": "11:00 PM",
+    "placeholder": "black"
+  },
+  {
+    "slug": "serie-06",
+    "index": "/26",
+    "title": "STUDIO RAW",
+    "photos": 15,
+    "year": "2023",
+    "time": "04:30 PM",
+    "placeholder": "white"
+  }
+]

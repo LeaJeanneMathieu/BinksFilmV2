@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CONTACT — BINKSFILMS</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/contact.css">
+  <link rel="icon" href="assets/images/logo.png" type="image/png">
+</head>
+<body data-page="contact" data-theme="green">
+  <div class="app contact-page">
+    <div id="sidebar-root"></div>
+    <main class="main">
+      <header class="page-header">
+        <div>
+          <p class="breadcrumb" style="font-family:var(--font-mono);font-size:0.65rem;color:var(--accent);margin-bottom:0.5rem">• PAGE / CONTACT</p>
+          <h1>CONTACT</h1>
+        </div>
+        <span class="page-header__meta">009 / 2024</span>
+      </header>
+      <p class="contact-intro">
+        Remplissez le formulaire pour obtenir un devis personnalisé pour vos projets vidéo ou photo. Nous vous répondrons sous 48h.
+      </p>
+      <div class="contact-layout">
+        <div class="contact-form-wrap">
+          <div class="contact-steps">
+            <span class="is-active">01 LE PROJET</span>
+            <span>02 VOS INFOS</span>
+            <span>03 VOS BESOINS</span>
+            <span>04 MESSAGE</span>
+          </div>
+          <form class="contact-form" id="contact-form" novalidate>
+            <p class="contact-form__step-label">01 / LE PROJET</p>
+
+            <div class="form-step is-active" data-label="LE PROJET">
+              <h2>Quel est le type de projet ?</h2>
+              <div class="contact-options">
+                <button type="button" class="contact-option is-selected">CLIP VIDÉO</button>
+                <button type="button" class="contact-option">PUBLICITÉ</button>
+                <button type="button" class="contact-option">COURT MÉTRAGE</button>
+                <button type="button" class="contact-option">ÉVÉNEMENTIEL</button>
+                <button type="button" class="contact-option">DOCUMENTAIRE</button>
+                <button type="button" class="contact-option">AUTRE</button>
+              </div>
+            </div>
+
+            <div class="form-step" data-label="VOS INFOS">
+              <h2>Vos coordonnées</h2>
+              <input type="text" name="name" placeholder="Nom / Pseudo" required>
+              <input type="email" name="email" placeholder="Email" required>
+              <input type="tel" name="phone" placeholder="Téléphone (optionnel)">
+            </div>
+
+            <div class="form-step" data-label="VOS BESOINS">
+              <h2>Décrivez vos besoins</h2>
+              <input type="text" name="budget" placeholder="Budget estimé">
+              <input type="text" name="deadline" placeholder="Date souhaitée">
+              <input type="text" name="location" placeholder="Lieu du tournage">
+            </div>
+
+            <div class="form-step" data-label="MESSAGE">
+              <h2>Votre message</h2>
+              <textarea name="message" placeholder="Parlez-nous de votre vision..." required></textarea>
+            </div>
+
+            <div class="contact-form__footer">
+              <p class="contact-form__note">Vous pourrez préciser davantage à l'étape suivante.</p>
+              <div class="contact-form__actions">
+                <button type="button" class="btn btn--outline" data-action="prev">RETOUR</button>
+                <button type="button" class="btn btn--accent" data-action="next">SUIVANT →</button>
+              </div>
+            </div>
+          </form>
+
+          <div class="contact-direct">
+            <h3>CONTACTS DIRECTS</h3>
+            <p>Une autre façon de nous joindre pour vos projets créatifs.</p>
+            <div class="contact-link-row"><span>EMAIL</span><span>contact@binksfilms.art ↗</span></div>
+            <div class="contact-link-row"><span>INSTAGRAM</span><span>@binksfilms ↗</span></div>
+            <div class="contact-link-row"><span>YOUTUBE</span><span>BinksFilms ↗</span></div>
+            <div class="contact-link-row"><span>TÉLÉPHONE</span><span>+33 6 00 00 00 00 ↗</span></div>
+          </div>
+        </div>
+        <aside class="contact-visual">
+          <img src="https://images.unsplash.com/photo-1606041011874-7a2b7e4b8f1e?w=400&q=80" alt="Objectif caméra" width="280">
+        </aside>
+      </div>
+      <footer class="contact-manifesto">
+        <div>
+          <strong>BINKSFILMS</strong><br>
+          <span class="accent" style="color:var(--accent)">LES BEAUX ARTS DU GHETTO</span><br>
+          <span class="contact-manifesto__coords">48.8566° N, 2.3522° E</span>
+        </div>
+        <blockquote>
+          ON DOCUMENTE CE QUE PERSONNE N'ARCHIVE.<br>
+          ON TRANSFORME LE RÉEL EN MÉMOIRE.<br>
+          ON CRÉE AVEC INTENTION.
+        </blockquote>
+        <span class="contact-time" id="live-time">03:12 AM</span>
+      </footer>
+    </main>
+  </div>
+  <script src="js/data.js"></script>
+  <script src="js/sidebar.js"></script>
+  <script src="js/contact.js"></script>
+</body>
+</html>

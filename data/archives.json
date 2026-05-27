@@ -1,0 +1,14 @@
+[
+  { "id": "ARCHIVE_024", "type": "VIDÉO", "title": "PARIS / 2025", "detail": "MiniDV Capture", "duration": "02:17", "placeholder": "black" },
+  { "id": "ARCHIVE_023", "type": "PHOTO", "title": "UNRELEASED", "detail": "Canon AE-1", "placeholder": "white" },
+  { "id": "ARCHIVE_022", "type": "PHOTO", "title": "BACKSTAGE", "detail": "Leica M6", "placeholder": "black" },
+  { "id": "ARCHIVE_021", "type": "NOTES", "title": "FIELD NOTES", "detail": "Handwritten", "placeholder": "white" },
+  { "id": "ARCHIVE_020", "type": "VIDÉO", "title": "MANIFESTO", "detail": "Super 8", "duration": "02:45", "placeholder": "black" },
+  { "id": "ARCHIVE_019", "type": "AUDIO", "title": "BINKSTAPE DEMO", "detail": "Cassette", "duration": "41:23", "placeholder": "white" },
+  { "id": "ARCHIVE_018", "type": "NOTES", "title": "MANIFESTE", "detail": "Citation", "quote": "ON N'EST PAS NÉS POUR RENTRER DANS LES CASES." },
+  { "id": "ARCHIVE_017", "type": "AUTRES", "title": "STUDIO LOG", "detail": "35mm", "placeholder": "black" },
+  { "id": "ARCHIVE_016", "type": "VIDÉO", "title": "LYON / 2024", "detail": "ARRI Alexa", "duration": "01:52", "placeholder": "white" },
+  { "id": "ARCHIVE_015", "type": "PHOTO", "title": "PORTRAITS", "detail": "Hasselblad", "placeholder": "black" },
+  { "id": "ARCHIVE_014", "type": "AUDIO", "title": "RAW MIX", "detail": "Unmastered", "duration": "12:08", "placeholder": "white" },
+  { "id": "ARCHIVE_013", "type": "VIDÉO", "title": "TEASER 2026", "detail": "Unreleased", "duration": "00:45", "placeholder": "black" }
+]

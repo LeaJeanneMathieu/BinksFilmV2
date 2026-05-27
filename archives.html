@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ARCHIVES — BINKSFILMS</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/archives.css">
+  <link rel="icon" href="assets/images/logo.png" type="image/png">
+</head>
+<body data-page="archives">
+  <div class="app">
+    <div id="sidebar-root"></div>
+    <main class="main">
+      <div class="archives-header">
+        <h1>ARCHIVES</h1>
+        <span class="archives-header__sub">EXPLORER LA MÉMOIRE</span>
+        <button class="btn-filter" type="button" style="margin-left:auto">FILTRER +</button>
+      </div>
+      <div class="archives-filters">
+        <div class="archives-filters__tabs">
+          <button type="button" class="is-active" data-filter="all">TOUT</button>
+          <button type="button" data-filter="videos">VIDÉOS</button>
+          <button type="button" data-filter="photos">PHOTOS</button>
+          <button type="button" data-filter="audio">AUDIO</button>
+          <button type="button" data-filter="notes">NOTES</button>
+        </div>
+        <span class="page-header__meta">TRIER PAR : <strong>RÉCENT</strong> ↓</span>
+      </div>
+      <div class="archives-grid" id="archives-grid"></div>
+      <div class="archives-load">
+        <button type="button">CHARGER PLUS ↓</button>
+      </div>
+    </main>
+  </div>
+  <script src="js/data.js"></script>
+  <script src="js/sidebar.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
