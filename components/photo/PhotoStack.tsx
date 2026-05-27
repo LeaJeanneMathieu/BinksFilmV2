@@ -9,6 +9,21 @@ const SCALE_MAX = 1;
 /** Plus la valeur est petite, plus le pic de zoom au centre est « serré » */
 const FOCUS_RANGE = 0.52;
 
+/** Centre et hauteur du viewport *visible* (barre d’URL mobile / VisualViewport). */
+function getViewportFocusMetrics(): { vh: number; midY: number } {
+  if (typeof window === "undefined") {
+    return { vh: 800, midY: 400 };
+  }
+  const vv = window.visualViewport;
+  if (vv) {
+    const vh = vv.height;
+    const midY = vv.offsetTop + vh * 0.5;
+    return { vh, midY };
+  }
+  const vh = window.innerHeight;
+  return { vh, midY: vh * 0.5 };
+}
+
 function tone(series: PhotoSeries): "black" | "white" {
   if (series.placeholder === "white" || series.placeholder === "black") {
     return series.placeholder;
@@ -67,11 +82,11 @@ function PhotoCard({
 
 export default function PhotoStack({ series }: { series: PhotoSeries[] }) {
   const wrapRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const rafRef = useRef<number | null>(null);
   const [scales, setScales] = useState<number[]>(() => series.map(() => SCALE_MIN));
 
   const updateScales = useCallback(() => {
-    const vh = typeof window !== "undefined" ? window.innerHeight : 800;
-    const mid = vh * 0.5;
+    const { vh, midY: mid } = getViewportFocusMetrics();
     const range = vh * FOCUS_RANGE;
 
     setScales(
@@ -90,15 +105,33 @@ export default function PhotoStack({ series }: { series: PhotoSeries[] }) {
     );
   }, [series]);
 
+  const scheduleUpdateScales = useCallback(() => {
+    if (typeof window === "undefined") return;
+    if (rafRef.current != null) return;
+    rafRef.current = window.requestAnimationFrame(() => {
+      rafRef.current = null;
+      updateScales();
+    });
+  }, [updateScales]);
+
   useEffect(() => {
     updateScales();
-    window.addEventListener("scroll", updateScales, { passive: true });
-    window.addEventListener("resize", updateScales, { passive: true });
+    window.addEventListener("scroll", scheduleUpdateScales, { passive: true, capture: true });
+    window.addEventListener("resize", scheduleUpdateScales, { passive: true });
+    const vv = window.visualViewport;
+    vv?.addEventListener("resize", scheduleUpdateScales, { passive: true });
+    vv?.addEventListener("scroll", scheduleUpdateScales, { passive: true });
     return () => {
-      window.removeEventListener("scroll", updateScales);
-      window.removeEventListener("resize", updateScales);
+      window.removeEventListener("scroll", scheduleUpdateScales, { capture: true });
+      window.removeEventListener("resize", scheduleUpdateScales);
+      vv?.removeEventListener("resize", scheduleUpdateScales);
+      vv?.removeEventListener("scroll", scheduleUpdateScales);
+      if (rafRef.current != null) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+      }
     };
-  }, [updateScales]);
+  }, [scheduleUpdateScales, updateScales]);
 
   return (
     <div className="photo-series photo-series--scroll">

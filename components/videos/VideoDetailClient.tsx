@@ -96,18 +96,21 @@ export default function VideoDetailClient({
             <p className="video-detail__desc">Comparatifs color grading — à compléter.</p>
           )}
         </div>
-        <div className="video-detail__gallery">
-          {video.gallery.map((src, i) => (
-            <Image
-              key={i}
-              src={src}
-              alt=""
-              width={200}
-              height={200}
-              unoptimized={src.startsWith("/")}
-            />
-          ))}
-        </div>
+        {tab === "PHOTOS" && (
+          <div className="video-detail__gallery">
+            {video.gallery.map((src, i) => (
+              <Image
+                key={i}
+                src={src}
+                alt=""
+                width={200}
+                height={200}
+                sizes="(max-width: 900px) 33vw, 200px"
+                unoptimized={src.startsWith("/")}
+              />
+            ))}
+          </div>
+        )}
       </div>
       {prev && (
         <p className="video-detail__prev">
