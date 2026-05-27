@@ -18,7 +18,7 @@ Ouvrir [http://localhost:3000](http://localhost:3000) — l’écran de chargeme
 | [`data/videos.json`](data/videos.json) | Clips (sync depuis la playlist YouTube « Palmarès ») |
 | [`data/photos.json`](data/photos.json) | Séries photo (`placeholder`: `black` ou `white` ; optionnel `image` pour vraies photos plus tard) |
 | [`data/archives.json`](data/archives.json) | Grille archives (`placeholder` noir/blanc, ou `quote` pour carte texte ; `image` optionnel) |
-| [`data/spotify-playlist.json`](data/spotify-playlist.json) | Playlist Spotify (`spotifyPlaylistUrl` ou `spotifyPlaylistId`) |
+| [`data/spotify-playlist.json`](data/spotify-playlist.json) | Lien Spotify **`spotifyUrl`** (album ou playlist) |
 | [`data/artists.json`](data/artists.json) | Carrousel accueil |
 | [`data/site.json`](data/site.json) | Email, réseaux, tagline |
 
@@ -33,18 +33,20 @@ Images locales : placer les fichiers dans [`public/assets/`](public/assets/) et 
 - `/videos` — Liste des clips
 - `/videos/[slug]` — Fiche clip (YouTube)
 - `/photo` — Séries photo
-- `/musique` — Playlist Spotify intégrée (lien à renseigner)
+- `/musique` — Album ou playlist Spotify (embed)
 - `/archives` — Mémoire / futurs projets
 - `/contact` — Formulaire 4 étapes (UI démo, pas d’envoi email)
 
-## Playlist Spotify (page Musique)
+## Spotify (page Musique — album ou playlist)
 
-Dans [`data/spotify-playlist.json`](data/spotify-playlist.json), renseigner **au moins un** des deux champs :
+Dans [`data/spotify-playlist.json`](data/spotify-playlist.json), renseigner **`spotifyUrl`** avec le lien complet Spotify (album ou playlist), y compris les URLs `intl-fr` :
 
-- `spotifyPlaylistUrl` : lien complet, ex. `https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M`
-- `spotifyPlaylistId` : uniquement l’ID si tu préfères (ex. `37i9dQZF1DXcBWIGoYBM5M`)
+- Album : `https://open.spotify.com/intl-fr/album/XXXX` ou `https://open.spotify.com/album/XXXX`
+- Playlist : `https://open.spotify.com/playlist/XXXX`
 
-La page affiche l’embed officiel Spotify + un bouton « Ouvrir dans Spotify ».
+**Compatibilité** : tu peux encore utiliser `spotifyPlaylistUrl` + `spotifyPlaylistId` (playlist uniquement pour l’ID seul).
+
+L’album ou la playlist doit être **public** (ou accessible en embed). La page affiche l’iframe officielle + « Ouvrir dans Spotify ».
 
 ## Synchroniser les vidéos YouTube
 
