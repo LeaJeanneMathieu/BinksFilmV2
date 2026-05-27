@@ -35,6 +35,9 @@
 
 .photo-card--scroll {
   max-width: min(900px, 92vw);
+  /* Le scale est piloté au scroll : une transition CSS provoque un conflit frame-à-frame (tremblement sur mobile). */
+  transition: none;
+  will-change: auto;
 }
 
 .photo-card--scroll.photo-card--featured,

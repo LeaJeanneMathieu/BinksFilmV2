@@ -93,9 +93,8 @@ export default function PhotoStack({ series }: { series: PhotoSeries[] }) {
       series.map((_, i) => {
         const wrap = wrapRefs.current[i];
         if (!wrap) return SCALE_MIN;
-        const card = wrap.querySelector(".photo-card");
-        if (!card) return SCALE_MIN;
-        const r = card.getBoundingClientRect();
+        /* Mesurer le conteneur sans transform : le rect de la carte inclut déjà le scale et crée une rétroaction. */
+        const r = wrap.getBoundingClientRect();
         const cy = r.top + r.height / 2;
         const dist = Math.abs(cy - mid);
         const t = Math.max(0, 1 - dist / range);
