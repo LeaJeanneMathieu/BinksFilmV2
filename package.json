@@ -10,6 +10,7 @@
     "sync:videos": "node scripts/sync-videos-playlist.mjs"
   },
   "dependencies": {
+    "@vercel/blob": "^2.4.0",
     "next": "^15.1.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

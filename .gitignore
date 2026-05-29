@@ -5,3 +5,6 @@ out
 *.pem
 .env*.local
 .vercel
+data/photos-store.json
+public/uploads/photos/*
+!public/uploads/photos/.gitkeep

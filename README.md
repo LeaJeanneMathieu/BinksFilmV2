@@ -6,17 +6,38 @@ Site portfolio Next.js pour BINKSFILMS — clips, photo, musique, archives et co
 
 ```bash
 npm install
+cp .env.example .env.local
+# Éditer .env.local : définir ADMIN_PASSWORD (espace admin photos)
 npm run dev
 ```
 
 Ouvrir [http://localhost:3000](http://localhost:3000) — l’écran de chargement redirige vers `/accueil`.
+
+### Photos : upload et publication
+
+1. Aller sur **`/admin/login`** avec le mot de passe défini dans `.env.local` (`ADMIN_PASSWORD`).
+2. Créer une **série**, y **ajouter des photos** (JPEG, PNG, WebP, max 15 Mo).
+3. Chaque photo est **privée par défaut** ; cliquer **Publier** pour l’afficher sur `/photo`.
+4. Les photos privées et non publiées **n’apparaissent pas** sur le site public.
+
+**En local** : métadonnées dans `data/photos-store.json`, fichiers dans `public/uploads/photos/`.
+
+### Vercel (production) — Blob
+
+1. Dashboard Vercel → projet → **Storage** → **Create Database / Store** → **Blob** → lier au projet.  
+   Cela ajoute automatiquement `BLOB_READ_WRITE_TOKEN`.
+2. **Settings → Environment Variables** : `ADMIN_PASSWORD` (mot de passe admin).
+3. **Redéployer** le projet.
+
+Sur Vercel, photos et index des séries sont stockés dans **Vercel Blob** (persistant). En local sans token Blob, le disque est utilisé comme avant.
 
 ## Modifier le contenu (sans toucher au code React)
 
 | Fichier | Contenu |
 |---------|---------|
 | [`data/videos.json`](data/videos.json) | Clips (sync depuis la playlist YouTube « Palmarès ») |
-| [`data/photos.json`](data/photos.json) | Séries photo (`placeholder`: `black` ou `white` ; optionnel `image` pour vraies photos plus tard) |
+| [`data/photos.json`](data/photos.json) | Maquettes de secours si aucune photo publiée via l’admin |
+| **Espace admin photos** | [`/admin/login`](http://localhost:3000/admin/login) — upload, privé / public par photo |
 | [`data/archives.json`](data/archives.json) | Grille archives (`placeholder` noir/blanc, ou `quote` pour carte texte ; `image` optionnel) |
 | [`data/spotify-playlist.json`](data/spotify-playlist.json) | Lien Spotify **`spotifyUrl`** (album ou playlist) |
 | [`data/artists.json`](data/artists.json) | Carrousel accueil |
@@ -32,7 +53,9 @@ Images locales : placer les fichiers dans [`public/assets/`](public/assets/) et 
 - `/accueil` — Page d’accueil
 - `/videos` — Liste des clips
 - `/videos/[slug]` — Fiche clip (YouTube)
-- `/photo` — Séries photo
+- `/photo` — Séries photo (uniquement photos **publiées**)
+- `/admin/login` — Connexion gestion photos
+- `/admin/photos` — Upload, privé / public
 - `/musique` — Album ou playlist Spotify (embed)
 - `/archives` — Mémoire / futurs projets
 - `/contact` — Formulaire 4 étapes (UI démo, pas d’envoi email)
