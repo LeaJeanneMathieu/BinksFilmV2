@@ -2,6 +2,7 @@ import { randomUUID } from "crypto";
 import photosSeed from "@/data/photos.json";
 import type { PhotoSeries } from "@/lib/types";
 import {
+  blobStoreExists,
   deletePhotoFile,
   isBlobStorageEnabled,
   loadPhotosStore,
@@ -29,6 +30,12 @@ function seedFromLegacyJson(): PhotosStore {
 async function ensureStore(): Promise<PhotosStore> {
   const existing = await loadPhotosStore();
   if (existing) return existing;
+
+  if (isBlobStorageEnabled() && (await blobStoreExists())) {
+    throw new Error(
+      "Lecture du registre photos impossible. Réessayez dans quelques secondes.",
+    );
+  }
 
   const seeded = seedFromLegacyJson();
   await savePhotosStore(seeded);
@@ -150,7 +157,11 @@ export async function updatePhoto(
   if (patch.seriesId && !store.series.some((s) => s.id === patch.seriesId)) {
     return null;
   }
-  store.photos[i] = { ...store.photos[i], ...patch };
+  const next = { ...store.photos[i] };
+  if (patch.isPublic !== undefined) next.isPublic = Boolean(patch.isPublic);
+  if (patch.seriesId !== undefined) next.seriesId = patch.seriesId;
+  if (patch.sortOrder !== undefined) next.sortOrder = patch.sortOrder;
+  store.photos[i] = next;
   await writePhotosStore(store);
   return store.photos[i];
 }

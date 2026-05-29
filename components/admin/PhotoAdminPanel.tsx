@@ -14,6 +14,8 @@ export default function PhotoAdminPanel() {
   const [newTitle, setNewTitle] = useState("");
   const [uploadingId, setUploadingId] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const [messageIsError, setMessageIsError] = useState(false);
+  const [togglingId, setTogglingId] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -44,25 +46,61 @@ export default function PhotoAdminPanel() {
       body: JSON.stringify({ title }),
     });
     if (!res.ok) {
-      setMessage("Impossible de créer la série");
+      setFeedback("Impossible de créer la série", true);
       return;
     }
     setNewTitle("");
-    setMessage("Série créée");
+    setFeedback("Série créée", false);
     await load();
   }
 
+  function setFeedback(text: string, isError: boolean) {
+    setMessage(text);
+    setMessageIsError(isError);
+  }
+
+  function patchPhotoInState(photoId: string, isPublic: boolean) {
+    setSeries((prev) =>
+      prev.map((s) => ({
+        ...s,
+        photos: s.photos.map((p) => (p.id === photoId ? { ...p, isPublic } : p)),
+      })),
+    );
+  }
+
   async function togglePublic(photo: PhotoRecord) {
-    const res = await fetch(`/api/admin/photos/${photo.id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ isPublic: !photo.isPublic }),
-    });
-    if (!res.ok) {
-      setMessage("Mise à jour impossible");
-      return;
+    const nextPublic = !photo.isPublic;
+    setTogglingId(photo.id);
+    patchPhotoInState(photo.id, nextPublic);
+
+    try {
+      const res = await fetch(`/api/admin/photos/${photo.id}`, {
+        method: "PATCH",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isPublic: nextPublic }),
+      });
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        patchPhotoInState(photo.id, photo.isPublic);
+        setFeedback(
+          typeof data.error === "string" ? data.error : "Mise à jour impossible",
+          true,
+        );
+        return;
+      }
+
+      if (data.photo) {
+        patchPhotoInState(photo.id, Boolean(data.photo.isPublic));
+      }
+      setFeedback(nextPublic ? "Photo publiée sur le site" : "Photo retirée du site", false);
+    } catch {
+      patchPhotoInState(photo.id, photo.isPublic);
+      setFeedback("Erreur réseau — réessayez", true);
+    } finally {
+      setTogglingId(null);
     }
-    await load();
   }
 
   async function removePhoto(photo: PhotoRecord) {
@@ -128,7 +166,14 @@ export default function PhotoAdminPanel() {
         </div>
       </header>
 
-      {message ? <p className="admin-panel__toast">{message}</p> : null}
+      {message ? (
+        <p
+          className={`admin-panel__toast ${messageIsError ? "admin-panel__toast--error" : ""}`}
+          role="status"
+        >
+          {message}
+        </p>
+      ) : null}
 
       <form className="admin-new-series" onSubmit={createSeries}>
         <label className="admin-field admin-field--grow">
@@ -207,9 +252,14 @@ export default function PhotoAdminPanel() {
                           <button
                             type="button"
                             className={`admin-btn admin-btn--sm ${p.isPublic ? "admin-btn--ghost" : "admin-btn--primary"}`}
+                            disabled={togglingId === p.id}
                             onClick={() => togglePublic(p)}
                           >
-                            {p.isPublic ? "Retirer du site" : "Publier"}
+                            {togglingId === p.id
+                              ? "…"
+                              : p.isPublic
+                                ? "Retirer du site"
+                                : "Publier"}
                           </button>
                           <button
                             type="button"

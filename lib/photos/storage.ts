@@ -1,6 +1,6 @@
 import { mkdir, readFile, unlink, writeFile } from "fs/promises";
 import path from "path";
-import { del, get, put } from "@vercel/blob";
+import { del, get, list, put } from "@vercel/blob";
 import type { PhotosStore } from "@/lib/photos/types";
 
 const BLOB_STORE_KEY = "binks/photos-store.json";
@@ -15,41 +15,51 @@ function blobToken() {
   return process.env.BLOB_READ_WRITE_TOKEN;
 }
 
-async function getStoreBlob() {
+function parseStore(raw: string): PhotosStore | null {
   try {
-    return await get(BLOB_STORE_KEY, { access: "private", token: blobToken() });
+    const data = JSON.parse(raw) as PhotosStore;
+    if (!Array.isArray(data.series) || !Array.isArray(data.photos)) return null;
+    return data;
   } catch {
-    try {
-      return await get(BLOB_STORE_KEY, { access: "public", token: blobToken() });
-    } catch {
-      return null;
-    }
+    return null;
+  }
+}
+
+async function blobStoreExists(): Promise<boolean> {
+  try {
+    const { blobs } = await list({ prefix: "binks/", limit: 50, token: blobToken() });
+    return blobs.some((b) => b.pathname === BLOB_STORE_KEY);
+  } catch {
+    return false;
   }
 }
 
 export async function loadPhotosStore(): Promise<PhotosStore | null> {
   if (isBlobStorageEnabled()) {
-    try {
-      const result = await getStoreBlob();
-      if (result?.statusCode === 200 && result.stream) {
-        const raw = await new Response(result.stream).text();
-        return JSON.parse(raw) as PhotosStore;
+    for (const access of ["private", "public"] as const) {
+      try {
+        const result = await get(BLOB_STORE_KEY, { access, token: blobToken() });
+        if (result?.stream) {
+          const raw = await new Response(result.stream).text();
+          const data = parseStore(raw);
+          if (data) return data;
+        }
+      } catch (err) {
+        console.error("[photos-store] get", access, err);
       }
-    } catch {
-      return null;
     }
     return null;
   }
 
   try {
     const raw = await readFile(LOCAL_STORE_PATH, "utf8");
-    return JSON.parse(raw) as PhotosStore;
+    return parseStore(raw);
   } catch {
     return null;
   }
 }
 
-async function putStoreJson(json: string) {
+async function putStoreJson(json: string): Promise<void> {
   const opts = {
     addRandomSuffix: false as const,
     allowOverwrite: true,
@@ -57,12 +67,16 @@ async function putStoreJson(json: string) {
     token: blobToken(),
   };
 
-  try {
-    await put(BLOB_STORE_KEY, json, { ...opts, access: "private" });
-    return;
-  } catch {
-    await put(BLOB_STORE_KEY, json, { ...opts, access: "public" });
+  let lastError: unknown;
+  for (const access of ["private", "public"] as const) {
+    try {
+      await put(BLOB_STORE_KEY, json, { ...opts, access });
+      return;
+    } catch (err) {
+      lastError = err;
+    }
   }
+  throw lastError instanceof Error ? lastError : new Error("Impossible d’enregistrer le registre photos");
 }
 
 export async function savePhotosStore(store: PhotosStore): Promise<void> {
@@ -109,7 +123,7 @@ export async function deletePhotoFile(pathOrUrl: string): Promise<void> {
     try {
       await del(pathOrUrl, { token: blobToken() });
     } catch {
-      /* déjà supprimé ou chemin invalide pour del */
+      /* déjà supprimé */
     }
     return;
   }
@@ -135,3 +149,5 @@ export function getMaxUploadBytes(): number {
   }
   return 15 * 1024 * 1024;
 }
+
+export { blobStoreExists };
