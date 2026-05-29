@@ -7,6 +7,7 @@ import {
   loadPhotosStore,
   savePhotosStore,
 } from "@/lib/photos/storage";
+import { photoDisplayUrl } from "@/lib/photos/url";
 import type { PhotoRecord, PhotoSeriesRecord, PhotosStore } from "@/lib/photos/types";
 
 function seedFromLegacyJson(): PhotosStore {
@@ -188,7 +189,7 @@ export async function getPublicSeriesForSite(): Promise<PhotoSeries[]> {
       year: s.year,
       time: s.time,
       placeholder: s.placeholder,
-      image: seriesPhotos[0]?.path,
+      image: seriesPhotos[0]?.path ? photoDisplayUrl(seriesPhotos[0].path) : undefined,
     });
   }
 

@@ -57,6 +57,7 @@ function PhotoCard({
             fill
             className="photo-card__img"
             sizes="(max-width: 900px) 100vw, 900px"
+            unoptimized={series.image.startsWith("/api/")}
           />
         </div>
       ) : null}

@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import type { PhotoRecord, PhotoSeriesRecord } from "@/lib/photos/types";
+import { photoDisplayUrl } from "@/lib/photos/url";
 
 type SeriesWithPhotos = PhotoSeriesRecord & { photos: PhotoRecord[] };
 
@@ -193,7 +194,14 @@ export default function PhotoAdminPanel() {
                     {s.photos.map((p) => (
                       <li key={p.id} className={`admin-photo ${p.isPublic ? "is-public" : ""}`}>
                         <div className="admin-photo__thumb">
-                          <Image src={p.path} alt="" fill sizes="160px" className="admin-photo__img" />
+                          <Image
+                            src={photoDisplayUrl(p.path)}
+                            alt=""
+                            fill
+                            sizes="160px"
+                            className="admin-photo__img"
+                            unoptimized={p.path.startsWith("/api/")}
+                          />
                         </div>
                         <div className="admin-photo__actions">
                           <button

@@ -11,10 +11,26 @@ export function isBlobStorageEnabled(): boolean {
   return Boolean(process.env.BLOB_READ_WRITE_TOKEN);
 }
 
+function blobToken() {
+  return process.env.BLOB_READ_WRITE_TOKEN;
+}
+
+async function getStoreBlob() {
+  try {
+    return await get(BLOB_STORE_KEY, { access: "private", token: blobToken() });
+  } catch {
+    try {
+      return await get(BLOB_STORE_KEY, { access: "public", token: blobToken() });
+    } catch {
+      return null;
+    }
+  }
+}
+
 export async function loadPhotosStore(): Promise<PhotosStore | null> {
   if (isBlobStorageEnabled()) {
     try {
-      const result = await get(BLOB_STORE_KEY, { access: "private" });
+      const result = await getStoreBlob();
       if (result?.statusCode === 200 && result.stream) {
         const raw = await new Response(result.stream).text();
         return JSON.parse(raw) as PhotosStore;
@@ -33,16 +49,27 @@ export async function loadPhotosStore(): Promise<PhotosStore | null> {
   }
 }
 
+async function putStoreJson(json: string) {
+  const opts = {
+    addRandomSuffix: false as const,
+    allowOverwrite: true,
+    contentType: "application/json",
+    token: blobToken(),
+  };
+
+  try {
+    await put(BLOB_STORE_KEY, json, { ...opts, access: "private" });
+    return;
+  } catch {
+    await put(BLOB_STORE_KEY, json, { ...opts, access: "public" });
+  }
+}
+
 export async function savePhotosStore(store: PhotosStore): Promise<void> {
   const json = JSON.stringify(store);
 
   if (isBlobStorageEnabled()) {
-    await put(BLOB_STORE_KEY, json, {
-      access: "private",
-      addRandomSuffix: false,
-      allowOverwrite: true,
-      contentType: "application/json",
-    });
+    await putStoreJson(json);
     return;
   }
 
@@ -57,12 +84,19 @@ export async function uploadPhotoFile(
 ): Promise<string> {
   if (isBlobStorageEnabled()) {
     const pathname = `binks/photos/${filename}`;
-    const blob = await put(pathname, buffer, {
-      access: "public",
+    const opts = {
       addRandomSuffix: false,
       contentType,
-    });
-    return blob.url;
+      token: blobToken(),
+    };
+
+    try {
+      await put(pathname, buffer, { ...opts, access: "private" });
+    } catch {
+      const blob = await put(pathname, buffer, { ...opts, access: "public" });
+      return blob.url;
+    }
+    return pathname;
   }
 
   await mkdir(LOCAL_UPLOAD_DIR, { recursive: true });
@@ -71,13 +105,11 @@ export async function uploadPhotoFile(
 }
 
 export async function deletePhotoFile(pathOrUrl: string): Promise<void> {
-  if (pathOrUrl.startsWith("http")) {
-    if (isBlobStorageEnabled()) {
-      try {
-        await del(pathOrUrl);
-      } catch {
-        /* déjà supprimé */
-      }
+  if (isBlobStorageEnabled()) {
+    try {
+      await del(pathOrUrl, { token: blobToken() });
+    } catch {
+      /* déjà supprimé ou chemin invalide pour del */
     }
     return;
   }
@@ -95,4 +127,11 @@ export async function deletePhotoFile(pathOrUrl: string): Promise<void> {
 export async function ensureLocalUploadDir(): Promise<string> {
   await mkdir(LOCAL_UPLOAD_DIR, { recursive: true });
   return LOCAL_UPLOAD_DIR;
+}
+
+export function getMaxUploadBytes(): number {
+  if (process.env.VERCEL) {
+    return 4 * 1024 * 1024;
+  }
+  return 15 * 1024 * 1024;
 }
